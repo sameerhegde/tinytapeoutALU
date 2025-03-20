@@ -16,11 +16,11 @@ async def test_cpu(dut):
     dut.uio_in.value = 0  # Write enable low initially
     dut.ui_in.value = 0   # No instruction initially
     await ClockCycles(dut.clk, 10)  # Wait 10 cycles during reset
-   # dut.rst_n.value = 1  # Deassert reset
+    dut.rst_n.value = 1  # Deassert reset
 
     # Enable write (pmWrEn)
     dut.uio_in.value = 0b10000000  # uio_in[7] = 1 (Write Enable)
-
+    
     # Load instructions into program memory
     instructions = [
         (0b000_0000, 0b1_0010011), (0b000_0001, 0b0_000_0000),
@@ -48,10 +48,12 @@ async def test_cpu(dut):
     dut.rst_n.value = 1
     dut._log.info("Start execution")
 
-    # Monitor uo_out for a few cycles
-    for i in range(9):
-        await ClockCycles(dut.clk, 1)
-        dut._log.info(f"Cycle {i+1}: uo_out = {dut.uo_out.value}")
+    # Wait 1-3 cycles for execution
+    await ClockCycles(dut.clk, 4)
 
-    dut._log.info(f"Final output: {dut.uo_out.value}")
+    # Check the output (should be sum of R1 and R2)
+    expected_output = 5  # Since R1 = 3, R2 = 2 → R3 = R1 + R2 = 5
+    assert dut.uo_out.value == expected_output, f"Test failed: Expected {expected_output}, got {dut.uo_out.value}"
+    
+    dut._log.info(f"Test passed: Output {dut.uo_out.value}")
 
