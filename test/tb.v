@@ -1,5 +1,12 @@
 `default_nettype none
 `timescale 1ns / 1ps
+`include "top_cpu.v"
+`include "programMemory.v"
+`include "programCounter.v"
+`include "alu.v"
+`include "controlUnit.v"
+`include "registerSet.v"
+`include "flipFlop.v"
 
 /* This testbench just instantiates the module and makes some convenient wires
    that can be driven / tested by the cocotb test.py.
