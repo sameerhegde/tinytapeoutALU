@@ -1,9 +1,9 @@
-`include "programMemory.v"
-`include "programCounter.v"
-`include "alu.v"
-`include "controlUnit.v"
-`include "registerSet.v"
-`include "flipFlop.v"
+//`include "programMemory.v"
+//`include "programCounter.v"
+//`include "alu.v"
+//`include "controlUnit.v"
+//`include "registerSet.v"
+//`include "flipFlop.v"
 
 
 
