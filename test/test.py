@@ -19,21 +19,21 @@ async def test_cpu(dut):
     #dut.rst_n.value = 1  # Deassert reset
 
     # Enable write (pmWrEn)
-    dut.uio_in.value = 0b10000000  # uio_in[7] = 1 (Write Enable)
+    #dut.uio_in.value = 0b10000000  # uio_in[7] = 1 (Write Enable)
 
     # Load instructions into program memory
     instructions = [
-        (0b000_0000, 0b1_0010011), (0b000_0001, 0b0_000_0000),
-        (0b000_0010, 0b00000_0011), (0b000_0011, 0b0000000_0),
+        (0b1000_0000, 0b1001_0011), (0b1000_0001, 0b0011_0000),
+        (0b1000_0010, 0b0000_0000), (0b1000_0011, 0b0000_0000),
 
-        (0b000_0100, 0b1_0010011), (0b000_0101, 0b0_000_0000),
-        (0b000_0110, 0b00000_0010), (0b000_0111, 0b0000000_0),
+        (0b1000_0100, 0b0001_0011), (0b1000_0101, 0b0010_0001),
+        (0b1000_0110, 0b0000_0010), (0b1000_0111, 0b0000_0000),
 
-        (0b000_1000, 0b0), (0b000_1001, 0b0),
-        (0b000_1010, 0b0), (0b000_1011, 0b0),
+        (0b1000_1000, 0b0), (0b1000_1001, 0b0),
+        (0b1000_1010, 0b0), (0b1000_1011, 0b0),
 
-        (0b000_1100, 0b1_0110011), (0b000_1101, 0b0_000_0001),
-        (0b000_1110, 0b00010_0001), (0b000_1111, 0b0000000_0)
+        (0b1000_1100, 0b1011_0011), (0b1000_1101, 0b0000_0001),
+        (0b1000_1110, 0b0001_0001), (0b1000_1111, 0b0000_0000)
     ]
 
     for addr, instr in instructions:
@@ -48,9 +48,11 @@ async def test_cpu(dut):
     dut.rst_n.value = 1
     dut._log.info("Start execution")
 
-    # Monitor uo_out for a few cycles
-    for i in range(9):
-        await ClockCycles(dut.clk, 1)
-        dut._log.info(f"Cycle {i+1}: uo_out = {dut.uo_out.value}")
+    # Wait 1-3 cycles for execution
+    await ClockCycles(dut.clk, 5)
 
-    dut._log.info(f"Final output: {dut.uo_out.value}")
+    # Check the output (should be sum of R1 and R2)
+    expected_output = 37  # Since R1 = 3, R2 = 34  → R3 = R1 + R2 = 37
+    assert dut.uo_out.value == expected_output, f"Test failed: Expected {expected_output}, got {dut.uo_out.value}"
+
+    dut._log.info(f"Test passed: Output {dut.uo_out.value}")
