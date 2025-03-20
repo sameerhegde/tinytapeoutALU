@@ -4,7 +4,7 @@
  */
 
 `default_nettype none
-`include "top_cpu.v" 
+//`include "top_cpu.v" 
 module tt_um_sameerhegde_cpu (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
